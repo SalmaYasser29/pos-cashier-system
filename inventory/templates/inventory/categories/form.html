@@ -1,0 +1,40 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Category Form{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="page-title">{{ form.instance.pk|yesno:"Edit Category,Add Category" }}</h1>
+
+    <div class="form-card">
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            {% if form.fields.branch %}
+            <div class="form-group">
+                {{ form.branch.label_tag }}
+                {{ form.branch }}
+                {{ form.branch.errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'inventory:category_list' %}'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Supplier Form{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="page-title">{{ form.instance.pk|yesno:"Edit Supplier,Add Supplier" }}</h1>
+
+    <div class="form-card">
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+            </div>
+
+            <div class="form-group">
+                {{ form.contact_person.label_tag }}
+                {{ form.contact_person }}
+            </div>
+
+            <div class="form-group">
+                {{ form.phone.label_tag }}
+                {{ form.phone }}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                {{ form.address.label_tag }}
+                {{ form.address }}
+            </div>
+
+            <div class="form-group">
+                {{ form.branch.label_tag }}
+                {{ form.branch }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'inventory:supplier_list' %}'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

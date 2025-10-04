@@ -1,0 +1,30 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Inventory Dashboard{% endblock %}
+
+{% block content %}
+<div class="inventory-dashboard">
+    <h1 class="page-title">Inventory Dashboard</h1>
+
+    <div class="stats-cards d-flex flex-wrap gap-4 mb-5">
+      <div class="card card-blue card-row">
+          <div class="card-info">
+              <h3>Categories</h3>
+              <p class="stat-value">{{ categories|length }}</p>
+          </div>
+          {% if user.is_superuser or user.role == "admin" %}
+          <a href="{% url 'inventory:category_list' %}" class="btn-primary btn-end">View List</a>
+          {% endif %}
+      </div>
+
+      <div class="card card-darkblue card-row">
+          <div class="card-info">
+              <h3>Items</h3>
+              <p class="stat-value">{{ items|length }}</p>
+          </div>
+          {% if user.is_superuser or user.role == "admin" %}
+          <a href="{% url 'inventory:item_list' %}" class="btn-primary btn-end">View List</a>
+          {% endif %}
+      </div>
+    </div>
+</div>
+{% endblock %}

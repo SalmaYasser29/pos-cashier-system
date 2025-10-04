@@ -1,0 +1,100 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Sale Detail{% endblock %}
+
+{% block content %}
+<div id="print-area">
+  <h1>Sale #{{ sale.id }}</h1>
+  <p>Date: {{ sale.datetime|date:"M d, Y, h:i A" }}</p>
+
+  <!-- Customer info -->
+  <p>Customer: 
+    {% if sale.customer %}
+      {{ sale.customer.name }}{% if sale.customer.phone %} ({{ sale.customer.phone }}){% endif %}
+    {% else %}
+      Walk-in
+    {% endif %}
+  </p>
+
+  <p>Branch: {{ sale.branch }}</p>
+  <p>Payment Method: {{ sale.payment_method|capfirst }}</p>
+
+  <!-- === New Order Type / Delivery / Table Info === -->
+  <p>Order Type: {{ sale.order_type|capfirst }}</p>
+  {% if sale.order_type == "delivery" and sale.delivery_address %}
+    <p>Delivery Address: {{ sale.delivery_address }}</p>
+  {% elif sale.order_type == "dine_in" and sale.table_number %}
+    <p>Table Number: {{ sale.table_number }}</p>
+  {% endif %}
+
+  <!-- Discount & totals -->
+  <p>Discount: {{ sale.discount_percent }}%</p>
+  <p>Discount Amount: {{ sale.discount_amount|floatformat:2 }}</p>
+  <p>Total Before Discount: {{ sale.total|floatformat:2 }}</p>
+  <p>Total After Discount: {{ sale.final_total|floatformat:2 }}</p>
+
+  <h2>Items</h2>
+  <table border="1" cellpadding="5" width="100%">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Line Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in sale.items.all %}
+      <tr>
+        <td>{{ item.item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price|floatformat:2 }}</td>
+        <td>{{ item.line_total|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if sale.details.all %}
+  <h3>Additional Details</h3>
+  <ul>
+    {% for detail in sale.details.all %}
+      <li>{{ detail.description }} — {{ detail.amount|floatformat:2 }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+<!-- Buttons (hidden when printing) -->
+<div class="no-print" style="margin-top:20px;">
+  <a href="{% url 'sales:receipt_pdf' sale.id %}" target="_blank" class="btn btn-info">Download Receipt PDF</a>
+  <button onclick="window.print()" class="btn btn-primary">🖨 Print</button>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hide elements with .no-print when printing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  #print-area {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 10px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  table th, table td {
+    border: 1px solid #000;
+    padding: 5px;
+  }
+}
+</style>
+{% endblock %}

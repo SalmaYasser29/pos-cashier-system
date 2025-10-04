@@ -1,0 +1,46 @@
+{% extends "accounts/layout.html" %}
+{% block title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">{{ form_title }}</h1>
+  
+  <div class="form-card">
+      <form method="POST" class="styled-form">
+          {% csrf_token %}
+
+          <div class="form-group">
+              <label for="name">Branch Name:</label>
+              <input type="text" name="name" value="{{ branch.name|default:'' }}" required>
+          </div>
+
+          <div class="form-group">
+              <label for="address">Address:</label>
+              <textarea name="address" rows="3">{{ branch.address|default:'' }}</textarea>
+          </div>
+
+          <div class="form-group">
+              <label for="city">City:</label>
+              <input type="text" name="city" value="{{ branch.city|default:'' }}">
+          </div>
+
+          <div class="form-group">
+              <label for="phone">Phone:</label>
+              <input type="text" name="phone" value="{{ branch.phone|default:'' }}">
+          </div>
+
+          <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" name="email" value="{{ branch.email|default:'' }}">
+          </div>
+
+          <div class="form-group">
+              <label for="website">Website (optional):</label>
+              <input type="url" name="website" value="{{ branch.website|default:'' }}">
+          </div>
+
+          <div class="form-actions">
+              <button type="submit" class="btn btn-success">Save</button>
+          </div>
+      </form>
+  </div>
+{% endblock %}

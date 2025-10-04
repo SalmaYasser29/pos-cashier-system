@@ -1,0 +1,66 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Activity Logs{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Activity Logs for {{ model }} #{{ object_id }}</h1>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Time</th>
+      <th scope="col">User</th>
+      <th scope="col">Action</th>
+      <th scope="col">Object</th>
+      <th scope="col">Branch</th>
+      <th scope="col">Changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+      <tr>
+        <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+        <td>{{ log.user|default:"System" }}</td>
+        <td>{{ log.action|title }}</td>
+        <td>{{ log.object_repr }}</td>
+        <td>{{ log.branch|default:"-" }}</td>
+        <td>
+          {% if log.changes %}
+            <table class="table table-sm table-bordered mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Field</th>
+                  <th>Old</th>
+                  <th>New</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for change in log.changes %}
+                  <tr>
+                    <td>{{ change.field }}</td>
+                    <td class="text-danger">{{ change.old|default:"-" }}</td>
+                    <td class="text-success">{{ change.new|default:"-" }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            {% if log.action == "create" %}
+              <span class="text-success">Created (no details)</span>
+            {% elif log.action == "delete" %}
+              <span class="text-danger">Deleted (no details)</span>
+            {% else %}
+              <span class="text-muted">No field changes</span>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="6" class="text-center">No logs found.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="javascript:history.back()" class="btn btn-secondary mt-3">Back</a>
+{% endblock %}

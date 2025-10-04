@@ -1,0 +1,66 @@
+{% extends "accounts/layout.html" %}
+{% load static %}  
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1>Checkout</h1>
+
+<div class="card p-3">
+
+  <!-- Search items -->
+  <div class="mb-3">
+    <input type="text" id="search" class="form-control" placeholder="Search items...">
+    <div id="results" class="mt-2"></div>
+  </div>
+
+  <!-- Cart -->
+  <h3>Cart</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="cart-items">
+      <tr><td colspan="5">Cart is empty</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Discount -->
+  <div class="mb-3">
+    <label for="discount"><strong>Discount (%)</strong></label>
+    <input type="number" id="discount" class="form-control" value="0" min="0" max="100">
+  </div>
+
+  <!-- Customer -->
+  <div class="mb-3">
+    <label for="customer"><strong>Customer:</strong></label>
+    <select id="customer" class="form-control">
+      <option value="">-- Walk-in Customer --</option>
+      {% for c in customers %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Payment -->
+  <div class="mb-3">
+    <strong>Payment Method:</strong><br>
+    <label><input type="radio" name="payment_method" value="cash" checked> Cash</label>
+    <label><input type="radio" name="payment_method" value="card"> Card</label>
+    <label><input type="radio" name="payment_method" value="mixed"> Mixed</label>
+  </div>
+
+  <!-- Grand total -->
+  <h3>Total: <span id="grand-total">0.00</span></h3>
+
+  <!-- Buttons -->
+  <button id="confirmCheckout" class="btn btn-primary">Confirm Checkout</button>
+  <a href="{% url 'sales:pos' %}" class="btn btn-secondary">Back to POS</a>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/sales.js' %}"></script>
+{% endblock %}

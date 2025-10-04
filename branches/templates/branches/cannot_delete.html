@@ -1,0 +1,19 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Cannot Delete Branch{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Cannot Delete Branch</h1>
+  <div class="form-card">
+      <p>The branch <strong>{{ branch.name }}</strong> cannot be deleted because it is linked to other records</p>
+      
+      <!-- <ul class="cannot-delete-list">
+          {% for item in reason %}
+          <li>{{ item }}</li>
+          {% endfor %}
+      </ul> -->
+
+      <div class="form-actions">
+          <a href="{% url 'branches:index' %}" class="btn-primary">Back to Branches</a>
+      </div>
+  </div>
+{% endblock %}

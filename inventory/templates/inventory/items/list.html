@@ -1,0 +1,36 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Items{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <h1 class="mb-2">Items</h1>
+
+    <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+        <!-- Search form -->
+        <form id="searchForm" class="search-bar-wrapper" method="get">
+            <input type="text" name="q" id="searchInput" value="{{ query }}" placeholder="Search items..." class="search-input">
+            <button type="submit" class="search-btn">
+                Search
+            </button>
+        </form>
+
+        <!-- Add Item button -->
+        {% if user.is_superuser or user.role == "admin" %}
+            <a href="{% url 'inventory:item_create' %}" class="btn-success" style="margin-bottom: 1.5em;">Add Item</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Items table container -->
+<div id="itemsContainer">
+    {% include "inventory/items/_items_table.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.itemsListUrl = "{% url 'inventory:item_list' %}";
+</script>
+<script src="{% static 'js/inventory.js' %}"></script>
+{% endblock %}

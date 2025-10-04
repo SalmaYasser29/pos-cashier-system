@@ -1,0 +1,108 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Users in {{ branch.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2 class="page-title">👥 Users in {{ branch.name }}</h2>
+    <a href="{% url 'accounts:manage_users' %}" class="btn-secondary">← Back</a>
+  </div>
+
+  <!-- Search -->
+  <div class="search-box">
+    <input 
+      type="text" 
+      id="search-box" 
+      class="form-control" 
+      placeholder="🔍 Search users..." 
+      style="max-width: 350px;">
+  </div>
+
+  <!-- User Table -->
+  <div id="users-container">
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Branch</th>
+            <th>Added By</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in page_obj %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td><span class="badge">{{ user.get_role_display }}</span></td>
+            <td>
+              {% if user.branch %}
+                <a href="{% url 'accounts:branch_users' user.branch.id %}" class="link-blue">
+                  {{ user.branch.name }}
+                </a>
+              {% else %}
+                <span class="text-muted">All Branches</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if user.added_by %}
+                {{ user.added_by.username }}
+              {% else %}
+                <span class="text-muted">-</span>
+              {% endif %}
+            </td>
+            <td class="actions text-center">
+              {% if user.role != "admin" %}
+                <form action="{% url 'accounts:edit_user' user.id %}">
+                    <button class="btn-small btn-primary">
+                        Edit
+                    </button>
+                </form>
+                <form method="post" action="{% url 'accounts:delete_user' user.id %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-small btn-danger"
+                    onclick="return confirm('Delete {{ user.username }}?');">
+                    Delete
+                  </button>
+                </form>
+              {% else %}
+                <span class="text-muted">No actions</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="#" data-page="{{ page_obj.previous_page_number }}" class="page-link">« Previous</a>
+      {% endif %}
+
+      <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+        <a href="#" data-page="{{ page_obj.next_page_number }}" class="page-link">Next »</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Ajax script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    window.branchUsersUrl = "{% url 'accounts:branch_users' branch.id %}";
+</script>
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

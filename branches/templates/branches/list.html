@@ -1,0 +1,24 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Branches{% endblock %}
+{% block content %}
+  <h1>Branches</h1>
+
+  <section class="panel">
+    <h3>Add branch</h3>
+    <form id="branchForm">
+      {% csrf_token %}
+      <input type="text" name="name" id="branchName" placeholder="Branch name" required>
+      <input type="text" name="address" id="branchAddress" placeholder="Address">
+      <button type="submit">Add</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h3>All branches</h3>
+    <div id="branchesList">Loading branches…</div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/branches.js' %}"></script>
+{% endblock %}

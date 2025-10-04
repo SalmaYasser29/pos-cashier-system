@@ -1,0 +1,22 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Cannot Delete Item{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1 class="page-title">Cannot Delete Item</h1>
+    <p>The item <strong>{{ item.name }}</strong> cannot be deleted because it is linked to the following records:</p>
+
+    <ul class="list-group mb-3">
+        {% for item in reason %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ item }}
+                <span class="badge bg-danger rounded-pill">Linked</span>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'inventory:item_list' %}'">
+        Back to Itemss
+    </button>
+</div>
+{% endblock %}

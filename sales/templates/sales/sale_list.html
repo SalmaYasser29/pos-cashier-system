@@ -1,0 +1,52 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Sales List{% endblock %}
+
+{% block content %}
+<h1>Sales List</h1>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Customer</th>
+      <th>Customer Type</th>
+      <th>Total</th>
+      <th>Payment</th>
+      <th>Date</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sale in sales %}
+      <tr>
+        <td>{{ sale.id }}</td>
+        <td>
+          {% if sale.customer %}
+            {{ sale.customer.name }}
+          {% else %}
+            Walk-in
+          {% endif %}
+        </td>
+        <td>
+          {% if sale.customer %}
+            {{ sale.customer.customer_type|default:"-" }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>{{ sale.final_total|floatformat:2 }}</td>
+        <td>{{ sale.payment_method|capfirst }}</td>
+        <td>{{ sale.datetime|date:"M d, Y, h:i A" }}</td>
+        <td>
+          <a href="{% url 'sales:sale_detail' sale.id %}" class="btn btn-sm btn-info">View</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="7">No sales yet.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'sales:pos' %}" class="btn btn-primary mt-3">Back to POS</a>
+{% endblock %}

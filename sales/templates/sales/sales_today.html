@@ -1,0 +1,45 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Today's Sales{% endblock %}
+
+{% block content %}
+<h1>Sales Today</h1>
+<a href="{% url 'sales:pos' %}" class="btn-secondary" style="margin-bottom: 1.5em;">Back to POS</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sale ID</th>
+            <th>Time</th>
+            <th>Customer</th>
+            <th>Customer Type</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>{{ sale.id }}</td>
+            <td>{{ sale.datetime|date:"h:i A" }}</td>
+
+            {% if sale.customer %}
+                <td>{{ sale.customer.name }}</td>
+                <td>{{ sale.customer.customer_type|default:"-" }}</td>
+            {% else %}
+                <td>Walk-in</td>
+                <td>-</td>
+            {% endif %}
+
+            <td>{{ sale.final_total|floatformat:2 }}</td>
+            <td>{{ sale.payment_method|capfirst }}</td>
+            <td><a href="{% url 'sales:sale_detail' sale.id %}" class="btn btn-sm btn-primary">View</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No sales today.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

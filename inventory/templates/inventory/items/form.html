@@ -1,0 +1,76 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Item Form{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="page-title">{{ form.instance.pk|yesno:"Edit Item,Add Item" }}</h1>
+
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data" class="styled-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.price.label_tag }}
+                {{ form.price }}
+                {{ form.price.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.stock.label_tag }}
+                {{ form.stock }}
+                {{ form.stock.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.category.label_tag }}
+                {{ form.category }}
+                {{ form.category.errors }}
+            </div>
+
+            {% if form.fields.branch %}
+            <div class="form-group">
+                {{ form.branch.label_tag }}
+                {{ form.branch }}
+                {{ form.branch.errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                {{ form.supplier.label_tag }}
+                {{ form.supplier }}
+                {{ form.supplier.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.sku.label_tag }}
+                {{ form.sku }}
+                {{ form.sku.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.barcode.label_tag }}
+                {{ form.barcode }}
+                {{ form.barcode.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.image.label_tag }}
+                {{ form.image }}
+                {{ form.image.errors }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'inventory:item_list' %}'">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

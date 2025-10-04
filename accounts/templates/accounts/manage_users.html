@@ -1,0 +1,26 @@
+{% extends "accounts/layout.html" %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="page-title">👥 Manage Users</h2>
+    <a href="{% url 'accounts:add_user' %}" class="btn-primary">➕ Add New User</a>
+</div>
+
+<div class="branches-list">
+    {% if request.user.is_superuser %}
+        {% for branch, branch_users in users_by_branch.items %}
+            <a href="{% url 'accounts:branch_users' branch.id %}" class="branch-card">
+                <h3>{{ branch.name }}</h3>
+                <p>{{ branch_users|length }} User{{ branch_users|length|pluralize }}</p>
+            </a>
+        {% endfor %}
+    {% elif request.user.role == "admin" %}
+        <a href="{% url 'accounts:branch_users' request.user.branch.id %}" class="branch-card">
+            <h3>{{ request.user.branch.name }}</h3>
+            <p>{{ request.user.branch.user_set.count }} Users</p>
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

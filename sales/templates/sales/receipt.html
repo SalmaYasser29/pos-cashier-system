@@ -1,0 +1,58 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Receipt #{{ sale.id }}{% endblock %}
+
+{% block content %}
+<div class="receipt-container">
+  <h1>Receipt</h1>
+  <div class="card p-3 mb-3">
+    <p><strong>Sale ID:</strong> {{ sale.id }}</p>
+    <p><strong>Date:</strong> {{ sale.datetime|date:"M d, Y, h:i A" }}</p>
+    <p><strong>Cashier:</strong> {{ sale.user }}</p>
+    <p><strong>Branch:</strong> {{ sale.branch }}</p>
+    <p><strong>Customer:</strong> 
+      {% if sale.customer %}
+        {{ sale.customer.name }}{% if sale.customer.phone %} ({{ sale.customer.phone }}){% endif %}
+      {% else %}
+        Walk-in
+      {% endif %}
+    </p>
+    <p><strong>Payment:</strong> {{ sale.payment_method|capfirst }}</p>
+
+    <!-- === New Order Type / Delivery / Table Info === -->
+    <p><strong>Order Type:</strong> {{ sale.order_type|capfirst }}</p>
+    {% if sale.order_type == "delivery" and sale.delivery_address %}
+      <p><strong>Delivery Address:</strong> {{ sale.delivery_address }}</p>
+    {% elif sale.order_type == "dine_in" and sale.table_number %}
+      <p><strong>Table Number:</strong> {{ sale.table_number }}</p>
+    {% endif %}
+
+    <hr>
+
+    <ul>
+      {% for s in sale.items.all %}
+        <li>
+          {{ s.item.name }} — {{ s.quantity }} × {{ s.price|floatformat:2 }} = {{ s.line_total|floatformat:2 }}
+        </li>
+      {% endfor %}
+    </ul>
+
+    <hr>
+
+    <p><strong>Total before discount:</strong> {{ total_before_discount|floatformat:2 }}</p>
+    <p><strong>Discount ({{ sale.discount_percent }}%):</strong> {{ discount_amount|floatformat:2 }}</p>
+    <p><strong>Total after discount:</strong> {{ total_after_discount|floatformat:2 }}</p>
+  </div>
+
+  <div class="actions mb-3">
+    <button id="printReceipt" class="btn btn-success">Print</button>
+    <a href="{% url 'sales:pos' %}" class="btn btn-secondary">Back to POS</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('printReceipt').addEventListener('click', () => window.print());
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Cashier Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome, Cashier {{ user.username }} ({{ user.branch.name }})</h1>
+
+<div class="dashboard-cards">
+    <!-- Today’s Sales -->
+    <a href="{% url 'sales:sales_today' %}" class="card-link">
+        <div class="card">
+            <h3>Today’s Sales</h3>
+            <p>${{ todays_sales }}</p>
+        </div>
+    </a>
+
+    <!-- Payment Method Breakdown -->
+    <div class="dashboard-cards mt-4">
+        <div class="card chart-card">
+            <h3>Payment Methods</h3>
+            <div class="chart-container">
+                <div id="payment-data"
+                    data-cash="{{ payment_methods.0|default:0 }}"
+                    data-card="{{ payment_methods.1|default:0 }}"
+                    data-mixed="{{ payment_methods.2|default:0 }}">
+                </div>
+                <canvas id="paymentMethodsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/accounts.js' %}"></script>
+
+{% endblock %}

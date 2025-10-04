@@ -1,0 +1,39 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Branch Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+    <h1>Welcome, {{ user.username }} (Branch Admin)</h1>
+    <h2>Branch: {{ branch_name }}</h2>
+    </div>
+
+    <div class="stats-grid">
+        <a href="{% url 'reports:dashboard' %}" class="card-link">
+            <div class="card card-blue">
+                <h3>Total Sales</h3>
+                <p class="stat-value">{{ branch_sales }}</p>
+            </div>
+        </a>
+
+        <a href="{% url 'inventory:category_list' %}" class="card-link">
+            <div class="card card-teal">
+                <h3>Categories</h3>
+                <p class="stat-value">{{ branch_categories }}</p>
+            </div>
+        </a>
+
+        <a href="{% url 'inventory:item_list' %}" class="card-link">
+            <div class="card card-darkblue">
+                <h3>Items</h3>
+                <p class="stat-value">{{ branch_items }}</p>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+<script src="{% static 'js/accounts.js' %}"></script>
+
+{% endblock %}

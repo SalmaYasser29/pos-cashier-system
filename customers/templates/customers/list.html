@@ -1,0 +1,52 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Customers{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h1 class="fw-bold">Customers {% if request.user.branch %}<small class="text-muted">({{ request.user.branch.name }})</small>{% endif %}</h1>
+<a href="{% url 'customers:customer_create' %}" class="btn btn-primary">
+    Add Customer
+</a>
+</div>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+    <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+        <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Type</th>
+        <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+        <td>{{ forloop.counter }}</td>
+        <td class="fw-semibold">{{ customer.name }}</td>
+        <td>{{ customer.phone }}</td>
+        <td>{{ customer.address|default:"-" }}</td>
+        <td>
+            <span class="badge {% if customer.customer_type == 'vip' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+            {{ customer.customer_type|default:"Regular" }}
+            </span>
+        </td>
+        <td class="text-end">
+            <a href="{% url 'customers:customer_edit' customer.id %}" class="btn btn-sm btn-outline-primary">
+            Edit
+            </a>
+        </td>
+        </tr>
+        {% empty %}
+        <tr>
+        <td colspan="6" class="text-center text-muted">No customers found in your branch.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+</div>
+{% endblock %}

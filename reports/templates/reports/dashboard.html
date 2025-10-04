@@ -1,0 +1,95 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+
+{% block title %}Branch {{ branch.name }} Sales Reports{% endblock %}
+
+{% block content %}
+<div data-branch-id="{{ request.user.branch.id }}">
+
+  <!-- Page Header -->
+  <div class="page-header mb-4 d-flex flex-column flex-md-row justify-content-between align-items-start">
+    <h1 class="page-title mb-2 mb-md-0">{{ branch.name }} - Sales Reports</h1>
+    <div class="d-flex gap-2 flex-wrap mt-2 mt-md-0">
+      <a id="exportCsvBtn" class="btn btn-success" href="#">Export CSV</a>
+      <a id="exportPdfBtn" class="btn btn-danger" href="#">Export PDF</a>
+    </div>
+  </div>
+
+  <!-- Row 1: Sales Chart (with controls) + Top Selling Items -->
+  <div class="row">
+    <!-- Sales Chart Card (left) -->
+    <div class="col-lg-6 col-12 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-semibold text-primary d-flex justify-content-between align-items-center">
+          <div>📈 Sales Overview</div>
+          <small class="text-muted">Filtered view</small>
+        </div>
+
+        <div class="card-body">
+          <!-- Controls row: date range + apply + quick filters -->
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+            <form id="dateRangeForm" class="daterange-wrapper">
+              <label for="daterange" class="daterange-label">Date Range:</label>
+              <input type="text" id="daterange" class="daterange-input" placeholder="Pick a range" aria-label="Date range">
+            </form>
+
+            <!-- Quick filters (wrap on small screens) -->
+            <div class="d-flex flex-wrap gap-2 ms-auto">
+              <button class="daterange-btn" onclick="loadTrends('daily')">Daily</button>
+              <button class="daterange-btn" onclick="loadTrends('weekly')">Weekly</button>
+              <button class="daterange-btn" onclick="loadTrends('monthly')">Monthly</button>
+              <button class="daterange-btn" onclick="loadTrends('yearly')">Yearly</button>
+            </div>
+          </div>
+
+          <!-- Sales chart -->
+          <div class="chart-container">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Selling Items Card (right) -->
+    <div class="col-lg-6 col-12 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-semibold text-success">🏆 Top Selling Items</div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="topItemsChart"></canvas>
+          </div>
+          <small class="text-muted d-block mt-3">Top 10 items by quantity in the selected date range.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Low Stock Alerts (full width) -->
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold text-warning">⚠️ Low Stock Alerts</div>
+        <div class="card-body p-3">
+          <ul id="lowStockList" class="list-group list-group-flush"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <!-- jQuery (required for daterangepicker) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Moment.js + Daterangepicker -->
+  <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Reports JS -->
+  <script src="{% static 'js/reports.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "accounts/layout.html" %}
+{% block title %}New Sale{% endblock %}
+
+{% block content %}
+<h1>Create Sale</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <p>Customer:
+    <select name="customer">
+      <option value="">Walk-in</option>
+      {% for c in customers %}
+      <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </p>
+
+  <p>Items:</p>
+  <ul>
+    {% for item in items %}
+      <li>
+        {{ item.name }} - {{ item.price }}
+        <input type="number" name="quantities" value="1" min="1">
+        <input type="hidden" name="items" value="{{ item.id }}">
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p>Payment Method:</p>
+  <label><input type="radio" name="payment_method" value="cash" checked> Cash</label>
+  <label><input type="radio" name="payment_method" value="card"> Card</label>
+  <label><input type="radio" name="payment_method" value="mixed"> Mixed</label>
+
+  <p><button type="submit">Save Sale</button></p>
+</form>
+{% endblock %}

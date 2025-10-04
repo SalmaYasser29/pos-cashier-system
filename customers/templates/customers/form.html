@@ -1,0 +1,39 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Customer Form{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1 class="form-title">{{ form_title|default:"Add Customer" }}</h1>
+  <form method="post" class="styled-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" type="text" name="name" value="{{ customer.name|default:'' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input id="phone" type="text" name="phone" value="{{ customer.phone|default:'' }}">
+    </div>
+
+    <div class="form-group">
+      <label for="address">Address</label>
+      <textarea id="address" name="address">{{ customer.address|default:'' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="type">Type</label>
+      <select id="type" name="type">
+        <option value="regular" {% if customer.customer_type == "regular" %}selected{% endif %}>Regular</option>
+        <option value="vip" {% if customer.customer_type == "vip" %}selected{% endif %}>VIP</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">Save</button>
+      <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'customers:index' %}'">Back</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

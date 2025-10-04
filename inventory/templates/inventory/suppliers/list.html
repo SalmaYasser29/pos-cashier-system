@@ -1,0 +1,87 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Suppliers{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Suppliers</h1>
+
+  <!-- Search & Actions -->
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+      <form method="get" class="search-bar-wrapper">
+          <input type="text" name="q" value="{{ query }}" placeholder="Search suppliers..." 
+                class="search-input">
+          <button type="submit" class="search-btn">Search</button>
+      </form>
+
+      <a href="{% url 'inventory:supplier_create' %}" class="btn-success">+ Add Supplier</a>
+      <a href="{% url 'inventory:index' %}" class="btn-secondary">Back to Inventory</a>
+  </div>
+
+  <!-- Suppliers Table -->
+  <div class="card-table">
+      <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Contact Person</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Branch</th>
+                  <th>Logs</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for supplier in suppliers %}
+              <tr>
+                  <td>{{ supplier.id }}</td>
+                  <td>{{ supplier.name }}</td>
+                  <td>{{ supplier.contact_person|default:"-" }}</td>
+                  <td>{{ supplier.phone|default:"-" }}</td>
+                  <td>{{ supplier.email|default:"-" }}</td>
+                  <td>{{ supplier.branch.name }}</td>
+                  <td>
+                      <a href="{% url 'inventory:logs_list' 'Supplier' supplier.id %}" class="btn-secondary" style="margin-top: 12px;">Logs</a>
+                  </td>
+                  <td class="actions">
+                      <a href="{% url 'inventory:supplier_detail' supplier.id %}" class="btn-info">View</a>
+                      <a href="{% url 'inventory:supplier_edit' supplier.id %}" class="btn-warning">Edit</a>
+                      <a href="{% url 'inventory:supplier_delete' supplier.id %}" class="btn-danger">Delete</a>
+                  </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="8" class="text-center">No suppliers found.</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if suppliers.has_other_pages %}
+  <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center mt-4">
+          {% if suppliers.has_previous %}
+              <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ suppliers.previous_page_number }}">Previous</a></li>
+          {% else %}
+              <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+
+          {% for num in suppliers.paginator.page_range %}
+              {% if suppliers.number == num %}
+                  <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+              {% else %}
+                  <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+              {% endif %}
+          {% endfor %}
+
+          {% if suppliers.has_next %}
+              <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ suppliers.next_page_number }}">Next</a></li>
+          {% else %}
+              <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+      </ul>
+  </nav>
+  {% endif %}
+{% endblock %}

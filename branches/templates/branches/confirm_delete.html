@@ -1,0 +1,21 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Delete Branch{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Delete Branch</h1>
+    <div class="form-card">
+        <p>Are you sure you want to delete branch 
+            <strong>{{ branch.name }}</strong> 
+            at <em>{{ branch.address }}</em>?
+        </p>
+
+        <form method="POST" class="styled-form form-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'branches:index' %}'">
+                Cancel
+            </button>
+        </form>
+
+    </div>
+{% endblock %}

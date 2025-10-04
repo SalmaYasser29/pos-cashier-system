@@ -1,0 +1,36 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Branches{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="page-title">Branches</h1>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'branches:branch_create' %}" class="btn-primary">+ Add Branch</a>
+        {% endif %}
+    </div>
+
+    {% if branches %}
+    <div class="branches-list">
+        {% for branch in branches %}
+        <div class="branch-card card-link">
+            <h3>{{ branch.name }}</h3>
+            <p><strong>Address:</strong> {{ branch.address }}</p>
+            <p><strong>City:</strong> {{ branch.city }}</p>
+            <p><strong>Phone:</strong> {{ branch.phone }}</p>
+            <p><strong>Email:</strong> {{ branch.email }}</p>
+            {% if branch.website %}
+            <p><strong>Website:</strong> <a href="{{ branch.website }}" target="_blank">{{ branch.website }}</a></p>
+            {% endif %}
+            {% if request.user.is_superuser %}
+            <div class="actions">
+                <a href="{% url 'branches:branch_edit' branch.id %}" class="btn-secondary ">Edit</a>
+                <a href="{% url 'branches:branch_delete' branch.id %}" class="btn-danger ">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert info" style="text-align:center;">No branches found.</div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome, Admin {{ user.username }} 
+    {% if user.branch %} ({{ user.branch.name }}) {% else %} (All Branches) {% endif %}
+</h1>
+
+<div class="dashboard-cards">
+    <a href="{% url 'accounts:manage_users' %}" class="card-link">
+        <div class="card">
+            <h3>Total Users</h3>
+            <p>{{ total_users }}</p>
+        </div>
+    </a>
+
+    <a href="{% url 'branches:index' %}" class="card-link">
+        <div class="card">
+            <h3>Total Branches</h3>
+            <p>{{ total_branches }}</p>
+        </div>
+    </a>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

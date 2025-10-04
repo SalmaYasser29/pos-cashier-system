@@ -1,0 +1,46 @@
+{% extends "accounts/layout.html" %}
+{% block title %}Item Detail{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Item Detail</h1>
+
+<div class="item-card card-table">
+    <div class="item-header d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ item.name }}</h2>
+        <div class="item-actions">
+            {% if request.user.is_superuser or request.user.role == "admin" %}
+                {% if item.branch == request.user.branch or request.user.is_superuser %}
+                    <a href="{% url 'inventory:item_edit' item.id %}" class="btn btn-warning">Edit</a>
+                    <a href="{% url 'inventory:item_delete' item.id %}" class="btn btn-danger">Delete</a>
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'inventory:item_list' %}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="item-info gap-4">
+        {% if item.image %}
+        <div class="info-item mb-3">
+            <strong>Image:</strong><br>
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" style="max-width:200px; border-radius:4px;">
+        </div>
+        {% endif %}
+        <div class="info-item"><strong>SKU:</strong> {{ item.sku|default:"-" }}</div>
+        <div class="info-item"><strong>Barcode:</strong> {{ item.barcode|default:"-" }}</div>
+        <div class="info-item"><strong>Category:</strong> {{ item.category.name|default:"-" }}</div>
+        <div class="info-item"><strong>Price:</strong> {{ item.price }}</div>
+        <div class="info-item"><strong>Stock:</strong> {{ item.stock }}</div>
+        <div class="info-item"><strong>Branch:</strong> {{ item.branch.name }}</div>
+        <div class="info-item"><strong>Supplier:</strong> {{ item.supplier.name|default:"-" }}</div>
+    </div>
+
+    <br>
+
+    {% comment %} Optional: Logs section {% endcomment %}
+    <div class="item-logs mt-4">
+        <a href="{% url 'inventory:logs_list' 'Item' item.id %}" class="btn btn-info">View Logs</a>
+    </div>
+</div>
+{% endblock %}

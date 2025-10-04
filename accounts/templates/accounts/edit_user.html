@@ -1,0 +1,46 @@
+{% extends "accounts/layout.html" %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<h2>Edit User</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" value="{{ user_obj.username }}" required>
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="{{ user_obj.email }}" required>
+    </div>
+
+    <div>
+        <label for="role">Role:</label>
+        <select name="role" required {% if request.user.role == "admin" and not request.user.is_superuser %}disabled{% endif %}>
+            {% if request.user.is_superuser %}
+                <option value="admin" {% if user_obj.role == "admin" %}selected{% endif %}>Admin</option>
+            {% endif %}
+            <option value="manager" {% if user_obj.role == "manager" %}selected{% endif %}>Manager</option>
+            <option value="cashier" {% if user_obj.role == "cashier" %}selected{% endif %}>Cashier</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Branch:</label><br>
+        <select name="branch" {% if request.user.role == "admin" and not request.user.is_superuser %}disabled{% endif %}>
+            {% for branch in branches %}
+                <option value="{{ branch.id }}" {% if user_obj.branch and user_obj.branch.id == branch.id %}selected{% endif %}>
+                    {{ branch.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'accounts:manage_users' %}" class="btn btn-secondary">Back to Manage Users</a>
+
+</form>
+{% endblock %}

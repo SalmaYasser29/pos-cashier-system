@@ -1,0 +1,213 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Point of Sale{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+  <h1 class="m-0 flex-grow-1">
+    Point of Sale {% if branch %}({{ branch.name }}){% endif %}
+  </h1>
+
+  <div>
+    <a href="{% url 'sales:sales_today' %}" class="btn-info">Show Today's Sales</a>
+    <a href="{% url 'sales:sales_list' %}" class="btn-info">Show All Sales</a>
+  </div>
+</div>
+
+<input type="text" id="itemSearch" class="form-control mb-3" placeholder="Search by name, category, supplier, price, stock...">
+
+<div class="d-flex gap-4">
+  <!-- Inventory Items -->
+  <div style="width:60%;" id="itemsContainer">
+    {% for cat in categories %}
+      <h3 class="mt-3">{{ cat.name }}</h3>
+      <div class="d-flex flex-wrap gap-3 category-items">
+        {% for item in items %}
+          {% if item.category_id == cat.id %}
+            {% if not branch or item.branch_id == branch.id %}
+              <div class="item-card border p-2 clickable-item" style="width:160px; cursor:pointer;"
+                  data-id="{{ item.id }}"
+                  data-name="{{ item.name }}"
+                  data-price="{{ item.price }}"
+                  data-name-lower="{{ item.name|lower }}"
+                  data-category="{{ cat.name|lower }}"
+                  data-supplier="{{ item.supplier.name|default:''|lower }}"
+                  data-price-search="{{ item.price }}"
+                  data-stock="{{ item.stock }}">
+                {% if item.image %}
+                  <img src="/media/{{ item.image }}" alt="{{ item.name }}" class="img-fluid" style="height:150px; width:150px;">
+                {% else %}
+                  <img src="{% static 'images/no-image.jpg' %}" alt="No Image" class="img-fluid" style="height:150px; width:150px;">
+                {% endif %}
+                <div class="mt-2">
+                  <strong>{{ item.name }}</strong><br>
+                  Price: {{ item.price }}<br>
+                  Stock: {{ item.stock }}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Cart -->
+  <div style="width:40%;">
+    <h2>Cart</h2>
+    <table id="cartTable" class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="mb-2">
+      <label class="form-label fw-semibold">Discount (%)</label>
+      <input type="number" id="discount" class="form-control" value="0" min="0" max="100">
+    </div>
+
+    <!-- Order Type -->
+    <div class="mb-2">
+      <label class="form-label fw-semibold">Order Type</label>
+      <select id="order_type" class="form-control">
+        <option value="dine_in">Dine-in</option>
+        <option value="takeaway" selected>Takeaway</option>
+        <option value="delivery">Delivery</option>
+      </select>
+    </div>
+
+    <!-- Table Number for Dine-in (hidden by default) -->
+    <div id="tableNumberWrapper" class="mb-2" style="display:none;">
+      <label class="form-label fw-semibold">Table Number</label>
+      <input type="text" id="table_number" class="form-control" placeholder="Enter table number">
+    </div>
+
+    <!-- Customer (only for delivery) -->
+    <div id="customerWrapper" class="mb-2">
+      <label class="form-label fw-semibold">Customer (optional)</label>
+      <div class="d-flex gap-2">
+        <select id="customer_id" class="form-control flex-grow-1">
+          <option value="">-- Walk-in --</option>
+          {% for customer in customers %}
+            {% if not branch or customer.branch_id == branch.id %}
+              <option value="{{ customer.id }}"
+                      data-type="{{ customer.customer_type }}"
+                      data-address="{{ customer.address|default:'' }}">
+                {{ customer.name }} ({{ customer.customer_type|default:"-" }})
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button type="button" class="btn btn-success" id="addCustomerBtn" data-bs-toggle="modal" data-bs-target="#customerModal">+</button>
+      </div>
+    </div>
+
+    <!-- Delivery Address (hidden by default) -->
+    <div id="deliveryAddressWrapper" class="mb-2" style="display:none;">
+      <label class="form-label fw-semibold">Delivery Address</label>
+      <input type="text" id="delivery_address" class="form-control" placeholder="Enter delivery address">
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label fw-semibold">Payment</label>
+      <select id="payment_method" class="form-control">
+        <option value="cash">Cash</option>
+        <option value="card">Card</option>
+        <option value="mixed">Mixed</option>
+      </select>
+    </div>
+
+    <div id="mixedPaymentInputs" style="display:none;">
+      <div class="mb-2">
+        <label class="form-label fw-semibold">Cash Amount</label>
+        <input type="number" id="cash_amount" class="form-control" value="0" min="0">
+      </div>
+      <div class="mb-2">
+        <label class="form-label fw-semibold">Card Amount</label>
+        <input type="number" id="card_amount" class="form-control" value="0" min="0">
+      </div>
+    </div>
+
+    <p><strong>Total:</strong> <span id="cartTotal">0.00</span></p>
+    <button type="button" id="checkoutBtn" class="btn btn-primary w-100">Checkout</button>
+  </div>
+</div>
+
+<!-- Customer Modal -->
+<div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <!-- Modal Header with Title -->
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Customer</h5>
+      </div>
+
+      <form id="customerForm" method="post" action="{% url 'customers:customer_create' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select name="type" class="form-control">
+              <option value="regular">Regular</option>
+              <option value="vip">VIP</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Customer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#customer_id').select2({
+        placeholder: "Select a customer",
+        allowClear: true,
+        width: '100%',
+        dropdownParent: $('#customer_id').parent()
+    });
+});
+</script>
+
+<!-- Bootstrap 5 -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Custom -->
+<script src="{% static 'js/sales.js' %}"></script>
+<link href="{% static 'css/pos.css' %}" rel="stylesheet">
+{% endblock %}

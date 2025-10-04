@@ -1,0 +1,39 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1 class="page-title">My Profile</h1>
+    
+    <div class="profile-card">
+        <div class="profile-photo">
+            {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="Profile Photo" id="profile-img">
+            {% else %}
+                <img src="{% static 'images/default-avatar.svg' %}" alt="Default Profile" id="profile-img">
+            {% endif %}
+
+            <input type="file" id="profile-input" accept="image/*" style="display:none;">
+            <label for="profile-input" class="edit-icon">
+                <img src="{% static 'images/user-pen-solid-full.svg' %}" alt="Edit Profile">
+            </label>
+        </div>
+        
+        <div class="profile-info">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Role:</strong> {{ user.role|capfirst }}</p>
+            <p><strong>Branch:</strong>
+                {% if user.branch %}
+                    {{ user.branch.name }}
+                {% else %}
+                    All Branches
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome, Manager {{ user.username }} ({{ user.branch.name }})</h1>
+
+<div class="dashboard-cards">
+
+    <!-- Branch Sales -->
+    <a href="{% url 'reports:dashboard' %}" class="card-link">
+        <div class="card">
+            <h3>Branch Sales</h3>
+            <p>${{ branch_sales }}</p>
+        </div>
+    </a>
+
+    <div class="card">
+        <h3>Total Branch Customers</h3>
+        <p>{{ branch_customers }}</p>
+    </div>
+    
+    <div class="card">
+        <h3>Branch Items</h3>
+        <p>{{ branch_items }}</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/accounts.js' %}"></script>
+{% endblock %}

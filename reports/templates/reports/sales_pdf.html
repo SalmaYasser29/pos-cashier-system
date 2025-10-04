@@ -1,0 +1,55 @@
+{% extends "accounts/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="report-container">
+    <h2 style="text-align:center; margin-bottom: 10px;">
+        Sales Report – {{ branch.name }}
+    </h2>
+
+    <table border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse: collapse; font-size: 14px;">
+        <thead style="background: #f2f2f2;">
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Final Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td>{{ sale.id }}</td>
+                <td>{{ sale.datetime|date:"Y-m-d H:i" }}</td>
+                <td>
+                    {% if sale.customer %}
+                        {{ sale.customer.name }}
+                    {% else %}
+                        Walk-in
+                    {% endif %}
+                </td>
+                <td>
+                    <ul style="padding-left: 15px; margin: 0;">
+                        {% for si in sale.items.all %}
+                            <li>{{ si.item.name }} (x{{ si.quantity }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td style="text-align:right;">{{ sale.final_total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align:center;">No sales found for this period</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="font-weight: bold; background: #f9f9f9;">
+                <td colspan="4" style="text-align:right;">Total</td>
+                <td style="text-align:right;">{{ totals.after }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}
