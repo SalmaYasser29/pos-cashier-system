@@ -1,7 +1,75 @@
 # 🧾 POS Cashier System
 
-A Point of Sale (POS) Cashier System built with **Django** and **Bootstrap**, designed to manage sales, branches, customers, inventory, and reporting for retail businesses.  
-It includes cashier operations, discounts, multiple payment methods and delivery order handling.
+A **Point of Sale (POS) Cashier System** built with **Django** and **Bootstrap**, designed for managing retail sales, inventory, customers, and reports across multiple branches.  
+It enables smooth cashier operations, supports multiple payment methods, manages discounts, delivery order handling, and provides comprehensive reporting dashboards.
+
+---
+
+## 💡 Distinctiveness and Complexity
+
+This project is **distinct** from all prior CS50W projects (Search, Wiki, Commerce, Mail, and Network) in both **purpose** and **technical implementation**.
+
+Unlike the earlier assignments, which focused on single-purpose applications (e.g., a wiki or an email client), this POS Cashier System integrates **multiple business modules** into one large-scale, production-ready web system. It demonstrates a **real-world use case** that simulates how retail companies operate digitally.
+
+### 🔹 Distinctiveness
+- **Business Focus**: While previous CS50W projects are academic exercises, this one is a full enterprise application intended for day-to-day business operations.
+- **Multi-role Access System**: Implements *Admin*, *Cashier*, and *Manager* roles, each with different permissions, extending beyond the simple authentication seen in “Network.”
+- **Branch Management**: Supports multiple branches and branch-based sales tracking — a feature not present in any prior project.
+- **Real-time Reporting & Analysis**: Uses Chart.js and dynamic JavaScript rendering to generate reports and visual insights.
+- **Integrated Modules**: Combines sales, inventory, customers, and reports — multiple interconnected apps within a single Django project.
+
+### 🔹 Complexity
+This project demonstrates **technical complexity** in the following ways:
+- **Modular Architecture**: Built as multiple Django apps (`accounts`, `sales`, `inventory`, `customers`, `branches`, `reports`) communicating through relationships and shared data models.
+- **Role-based Authentication**: Enforces permissions at both view and template levels using session-based access control.
+- **Dynamic Frontend Logic**: JavaScript and AJAX are used for live cart updates, mixed payment calculation, and delivery handling without reloading the page.
+- **Reporting Engine**: Implements custom aggregation logic and visual dashboards for analyzing transactions, revenues, and payment methods.
+- **Database-Driven Triggers (Conceptual)**: Simulates accounting logic and financial tracking for future database integration.
+- **UI/UX Design**: Uses Bootstrap 5 with custom styles for a professional cashier interface.
+
+Together, these features make this project more **complex and production-oriented** than any of the course’s prior assignments, showcasing full-stack mastery of Django, HTML, CSS, and JavaScript.
+
+---
+
+## 📁 Files Created and Modified
+
+Below is a detailed summary of the main files I created or modified and their purposes.
+
+### `pos_system/` (Main Django Configuration)
+- **settings.py** — Configured installed apps, static/media paths, and database.
+- **urls.py** — Global URL routing linking to all app URLs.
+- **wsgi.py/asgi.py** — Deployment configuration files.
+
+### `accounts/`
+- **models.py** — Defines custom user model extensions with role and branch attributes.
+- **views.py** — Handles login/logout, session management, and access control.
+- **templates/accounts/** — Includes HTML templates for login pages, layout, and navigation.
+- **static/** — Contains CSS and JS used sitewide.
+
+### `branches/`
+- **models.py** — Defines Branch model used to segment sales and reports.
+- **views.py** — Provides branch CRUD operations for admins.
+- **templates/branches/** — Displays branch lists and forms.
+
+### `customers/`
+- **models.py** — Manages customer data, including delivery addresses.
+- **views.py** — Handles customer CRUD and dynamic address fetching (used in sales interface).
+- **templates/customers/** — Customer form and list pages.
+
+### `inventory/`
+- **models.py** — Manages item, category, and supplier data.
+- **views.py** — Handles inventory CRUD operations and stock tracking.
+- **templates/inventory/** — Pages for adding and editing inventory data.
+
+### `sales/`
+- **models.py** — Core transactional logic (Sales, SaleItems, Payments).
+- **views.py** — Processes checkout logic, discounts, mixed payments, and order types.
+- **templates/sales/** — POS cashier interface (cart, order creation, checkout).
+
+### `reports/`
+- **views.py** — Generates aggregated sales and revenue data for dashboards.
+- **templates/reports/** — Displays data visualization using Chart.js.
+- **models.py** — Defines any helper models for storing summarized report data.
 
 ---
 
@@ -14,6 +82,8 @@ It includes cashier operations, discounts, multiple payment methods and delivery
   - Multiple payment methods (cash, card, mixed)  
 - 📦 **Inventory Management** (items, categories, and suppliers)  
 - 👨‍👩‍👧 **Customer Management** (addresses, delivery orders)  
+- 🏢 **Branch Handling**
+  - Branch-specific sales and user restrictions
 - 📊 **Reports & Dashboards**  
   - Daily, weekly, monthly, and yearly sales reports  
   - Payment method charts  
