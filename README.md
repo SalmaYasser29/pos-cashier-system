@@ -12,7 +12,7 @@ This project is **distinct** from all prior CS50W projects (Search, Wiki, Commer
 Unlike the earlier assignments, which focused on single-purpose applications (e.g., a wiki or an email client), this POS Cashier System integrates **multiple business modules** into one large-scale, production-ready web system. It demonstrates a **real-world use case** that simulates how retail companies operate digitally.
 
 ### 🔹 Distinctiveness
-- **Business Focus**: While previous CS50W projects are academic exercises, this one is a full enterprise application intended for day-to-day business operations.
+- **Business Focus**: While previous CS50W projects are academic exercises, this one is a full enterprise application intended for daily business operations.
 - **Multi-role Access System**: Implements *Admin*, *Cashier*, and *Manager* roles, each with different permissions, extending beyond the simple authentication seen in “Network.”
 - **Branch Management**: Supports multiple branches and branch-based sales tracking — a feature not present in any prior project.
 - **Real-time Reporting & Analysis**: Uses Chart.js and dynamic JavaScript rendering to generate reports and visual insights.
